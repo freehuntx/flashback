@@ -7,6 +7,11 @@
 <p align="center">
   Reviving the golden age of Flash games with modern web technologies
 </p>
+<p align="center">
+  <a href="https://freehuntx.github.io/flashback" target="_blank">
+    🎮 Browse the Game Library 🎮
+  </a>
+</p>
 
 ## 🌟 Overview
 Flashback is an open-source project dedicated to preserving and modernizing classic Flash games. Using modern web technologies, we're not only bringing these games back to life but also enhancing some of them with extra multiplayer capabilities!
@@ -28,7 +33,7 @@ Flashback is an open-source project dedicated to preserving and modernizing clas
 ## 🎮 Supported Games
 | Game        | Single Player | Multiplayer |
 |-------------|:-------------:|:-----------:|
-| Bomberpengu | ❔ | ✅ |
+| [Bomberpengu](https://freehuntx.github.io/flashback/bomberpengu) | ❔ | ✅ |
 > ❔ = Not existant
 
 ## 🛠️ Installation
