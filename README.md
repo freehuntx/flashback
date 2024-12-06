@@ -28,7 +28,8 @@ Flashback is an open-source project dedicated to preserving and modernizing clas
 ## 🎮 Supported Games
 | Game        | Single Player | Multiplayer |
 |-------------|:-------------:|:-----------:|
-| Bomberpengu | [❔](a "Has no singleplayer") | ✅ |
+| Bomberpengu | ❔ | ✅ |
+> ❔ = Not existant
 
 ## 🛠️ Installation
 ```bash
