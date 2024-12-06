@@ -5,8 +5,11 @@
     <base href="%BASE_URL%/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-		<script src="PlayerIOClient.development.js"></script>
     <script src="ruffle/ruffle.js"></script>
+		<script src="PlayerIOClient.development.js"></script>
+    <script>
+      PlayerIO.useSecureApiRequests = location.protocol === 'https:'
+    </script>
     <link rel="stylesheet" href="/src/index.css">
     <title>Flashback - Enjoy old flash games</title>
     
