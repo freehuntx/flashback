@@ -3,12 +3,9 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
-// Needed for hosting via github pages
-const BASE_PATH = process.env.NODE_ENV === 'production' ? '/flashback' : ''
-
 // https://vite.dev/config/
 export default defineConfig({
-  base: BASE_PATH,
+  base: process.env.BASE_PATH || '/',
   assetsInclude: ["**/*.swf"],
   resolve: {
     alias: {
@@ -27,4 +24,11 @@ export default defineConfig({
       ]
     }),
   ],
+  server: {
+    hmr: {
+      host: 'localhost',
+      protocol: 'ws',
+      overlay: false
+    }
+  }
 })

@@ -1,8 +1,7 @@
 import { WebSocketClient, WebSocketServer } from "@/lib/ws-browser-mock";
 import { Flashplayer, FlashplayerProps } from "./Flashplayer";
 import { mergeDeep } from "@/utils/object";
-import { useFixedMemo } from "@/hooks/memo";
-import { useFixedEffect } from "@/hooks/effect";
+import { useEffect, useMemo } from "react";
 
 export interface Proxy {
   host: string;
@@ -17,7 +16,7 @@ export interface MpFlashplayerProps extends FlashplayerProps {
 }
 
 export function MpFlashplayer({ proxies, config, ...props }: MpFlashplayerProps) {
-  const mergedConfig = useFixedMemo(() => {
+  const mergedConfig = useMemo(() => {
     return mergeDeep(config, {
       socketProxy: proxies.map(({ host, port }) => ({
         host,
@@ -25,12 +24,11 @@ export function MpFlashplayer({ proxies, config, ...props }: MpFlashplayerProps)
         proxyUrl: `wss://${host}:${port}`
       }))
     })
-  }, [config])
+  }, [config, proxies])
 
-  useFixedEffect(() => {
+  useEffect(() => {
     if (!proxies) return
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
     let servers = proxies.map(proxy => {
       const server = new WebSocketServer({ host: proxy.host, port: proxy.port })
 

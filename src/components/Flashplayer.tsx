@@ -1,34 +1,49 @@
-import { useFixedEffect } from "@/hooks/effect";
-import { useRef, useState } from "react";
+import { useEffect, useRef } from 'react';
 
-export interface FlashplayerProps	extends React.ObjectHTMLAttributes<HTMLObjectElement> {
-	config: RuffleConfig;
-	children?: React.ReactNode;
+export interface FlashplayerProps extends React.ComponentProps<"div"> {
+  config: Ruffle.URLLoadOptions | Ruffle.DataLoadOptions;
+  width?: string | number
+  height?: string | number
 }
 
-export function Flashplayer({ config, ...props }: FlashplayerProps) {
-  const [player] = useState(window.RufflePlayer.newest().createPlayer())
-  const containerRef = useRef<HTMLDivElement>(null);
+export function Flashplayer({ config, style, className, ...props }: FlashplayerProps) {
+  const placeholderRef = useRef<HTMLDivElement>(null);
 
-  Object.assign(player.style, {
-    display: 'block',
-    width: '100%',
-    height: '100%'
-  })
+  useEffect(() => {
+    const { current: placeHolder } = placeholderRef;
+    if (!placeHolder || !config) return
 
-  useFixedEffect(() => {
-    if (!containerRef.current) return
+    const player = window.RufflePlayer.newest().createPlayer();
+    
+    // Apply styles and other props to the player
+    if (style) Object.assign(player.style, style);
+    if (className) player.className = className;
 
-    containerRef.current.appendChild(player);
+    // Apply any other HTML attributes
+    const eventListeners: {eventName: string, listener: EventListener}[] = [];
+    Object.entries(props).forEach(([key, value]) => {
+      if (key.startsWith('on')) {
+        const eventName = key.toLowerCase().substring(2);
+        player.addEventListener(eventName, value as EventListener);
+        eventListeners.push({eventName, listener: value as EventListener});
+      } else {
+        player.setAttribute(key, value as string);
+      }
+    });
+    
+    placeHolder.replaceWith(player)
+
+    player.load(config)
 
     return () => {
-      containerRef.current?.removeChild(player);
+      // Remove event listeners
+      eventListeners.forEach(({eventName, listener}) => {
+        player.removeEventListener(eventName, listener);
+      });
+      
+      player.replaceWith(placeHolder);
     }
-  }, [containerRef])
+  }, [config, style, className, props])
 
-  useFixedEffect(() => {
-    player.load(config)
-  }, [config])
-
-  return <div ref={containerRef} {...props} />
+  return <div ref={placeholderRef} />;
 }
