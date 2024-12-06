@@ -1,7 +1,6 @@
 import { WebSocketClient, WebSocketServer } from "@/lib/ws-browser-mock";
 import { Flashplayer, FlashplayerProps } from "./Flashplayer";
 import { mergeDeep } from "@/utils/object";
-import { useOnMount } from "@/hooks/mount";
 import { useFixedMemo } from "@/hooks/memo";
 import { useFixedEffect } from "@/hooks/effect";
 
@@ -31,6 +30,7 @@ export function MpFlashplayer({ proxies, config, ...props }: MpFlashplayerProps)
   useFixedEffect(() => {
     if (!proxies) return
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     let servers = proxies.map(proxy => {
       const server = new WebSocketServer({ host: proxy.host, port: proxy.port })
 
@@ -50,7 +50,7 @@ export function MpFlashplayer({ proxies, config, ...props }: MpFlashplayerProps)
     })
 
     return () => {
-      for(const server of servers) {
+      for(const _server of servers) {
         // server.close() // NOT IMPLEMENTED
       }
       servers = []
