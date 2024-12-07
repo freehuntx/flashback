@@ -28,17 +28,26 @@ namespace BomberPenguGame
     }
   }
 
-	public class Player : BasePlayer
+  public class Player : BasePlayer
   {
     public List<Player> challengedPlayers = new List<Player>();
     public Match match;
 
     public string Name;
     public bool alive = false;
-		public bool challengeAll = false;
+    public bool challengeAll = false;
+    public bool freestyleRequested = false;
     int wins = 0;
     int loses = 0;
     int draws = 0;
+
+    public Player Enemy
+    {
+      get {
+        if (!InMatch) return null;
+        return match.players.FirstOrDefault(p => p != this);
+      }
+    }
 
     public string Skill
     {
@@ -70,6 +79,56 @@ namespace BomberPenguGame
     public void Spawn()
     {
       alive = true;
+      freestyleRequested = false;
+    }
+
+    public void SendChat(string sender, string message)
+    {
+      Send("xml", $"<{(InMatch ? "msgPlayer" : "msgAll")} name=\"{sender}\" msg=\"{message}\" />");
+    }
+
+    public void RequestFreestyle()
+    {
+      if (!alive || !InMatch || Enemy == null || freestyleRequested) return;
+      freestyleRequested = true;
+
+      if (!Enemy.freestyleRequested)
+      {
+        SendChat("System", "You requested freestyle");
+        Enemy.SendChat("System", "Your opponent requested freestyle. Type !fs to agree");
+      }
+      else
+      {
+        SendChat("System", "Starting freestyle!");
+        Enemy.SendChat("System", "Starting freestyle!");
+
+        foreach (var player in match.players)
+        {
+          player.Send("xml", "<Tag16 s = \"26\" />");
+          var posList = "3:0,5:0,8:1,1:2,2:2,3:2,7:2,2:3,4:3,8:3,10:3,5:4,6:4,10:4,11:4,4:5,6:5,8:5,0:6,2:6,4:6,6:6,8:6,10:6,11:6,2:7,4:7,8:7,12:7,4:8,8:8,9:8,10:8,8:9,3:10,4:10,6:10,9:10".Split(',');
+          foreach (var item in posList)
+          {
+            var pos = item.Split(':');
+            player.Send("xml", $"<Tag17 c=\"0000\" x=\"0\" y=\"0\" xp=\"{pos[0]}\" yp=\"{pos[1]}\" />");
+          }
+        }
+      }
+    }
+
+    public void ShowHelp()
+    {
+      var lines = new Dictionary<string, string>()
+      {
+        { "!fs|!freestyle", "Vote for a freestyle round" },
+        { "!bug", "Report a bug" },
+        { "!h|!help", "Show this help" },
+      };
+
+
+      foreach (var entry in lines)
+      {
+        SendChat(entry.Key, entry.Value);
+      }
     }
 
     public string GetState(Player askingPlayer)
@@ -92,8 +151,9 @@ namespace BomberPenguGame
     }
   }
 
-	[RoomType("Lobby")]
-	public class Room : Game<Player> {
+  [RoomType("Lobby")]
+  public class Room : Game<Player>
+  {
 
     public override bool AllowUserJoin(Player player)
     {
@@ -134,9 +194,9 @@ namespace BomberPenguGame
       player.Send("xml", userListXml);
     }
 
-		public override void UserLeft(Player player)
+    public override void UserLeft(Player player)
     {
-      foreach(var p in Players)
+      foreach (var p in Players)
       {
         if (p == player) continue;
 
@@ -146,12 +206,12 @@ namespace BomberPenguGame
       Broadcast("xml", $"<playerLeft name=\"{player.Name}\" />");
     }
 
-		private void OnXml(Player player, XmlDocument xml, string xmlString)
+    private void OnXml(Player player, XmlDocument xml, string xmlString)
     {
-			string rootName = xml.DocumentElement.Name;
+      string rootName = xml.DocumentElement.Name;
 
-			if (rootName == "auth")
-			{
+      if (rootName == "auth")
+      {
         var name = xml.DocumentElement.Attributes["name"]?.Value ?? "";
         if (name != player.Name)
         {
@@ -178,21 +238,21 @@ namespace BomberPenguGame
         return;
       }
 
-			if (rootName == "challenge")
-			{
-				var targetPlayerName = xml.DocumentElement.Attributes["name"]?.Value ?? "";
-        if (targetPlayerName == "")  return;
+      if (rootName == "challenge")
+      {
+        var targetPlayerName = xml.DocumentElement.Attributes["name"]?.Value ?? "";
+        if (targetPlayerName == "") return;
 
         var targetPlayer = Players.Where(p => p.Name == targetPlayerName).FirstOrDefault();
-				if (targetPlayer == null) return;
+        if (targetPlayer == null) return;
 
         player.challengedPlayers.Add(targetPlayer);
 
         targetPlayer.Send("xml", $"<request name=\"{player.Name}\" />\0");
-				return;
+        return;
       }
 
-			if (rootName == "remChallenge")
+      if (rootName == "remChallenge")
       {
         var targetPlayerName = xml.DocumentElement.Attributes["name"]?.Value ?? "";
         if (targetPlayerName == "") return;
@@ -200,7 +260,7 @@ namespace BomberPenguGame
         var targetPlayer = player.challengedPlayers.Where(p => p.Name == targetPlayerName).FirstOrDefault();
         if (targetPlayer == null) return;
 
-				player.challengedPlayers.Remove(targetPlayer);
+        player.challengedPlayers.Remove(targetPlayer);
 
         targetPlayer.Send("xml", $"<remRequest name=\"{player.Name}\" />\0");
         return;
@@ -212,14 +272,14 @@ namespace BomberPenguGame
 
         player.challengeAll = true;
 
-				foreach (var p in Players)
-				{
-					if (p == player) continue;
-					if (player.challengedPlayers.Contains(p)) continue;
+        foreach (var p in Players)
+        {
+          if (p == player) continue;
+          if (player.challengedPlayers.Contains(p)) continue;
 
-					player.challengedPlayers.Add(p);
-					p.Send("xml", $"<request name=\"{player.Name}\" />\0");
-				}
+          player.challengedPlayers.Add(p);
+          p.Send("xml", $"<request name=\"{player.Name}\" />\0");
+        }
 
         return;
       }
@@ -239,7 +299,7 @@ namespace BomberPenguGame
         return;
       }
 
-			if (rootName == "startGame")
+      if (rootName == "startGame")
       {
         var targetPlayerName = xml.DocumentElement.Attributes["name"]?.Value ?? "";
         if (targetPlayerName == "") return;
@@ -265,11 +325,11 @@ namespace BomberPenguGame
         return;
       }
 
-			if (rootName == "winGame")
-			{
+      if (rootName == "winGame")
+      {
         if (!player.InMatch) return;
         player.Win();
-				return;
+        return;
       }
 
       if (rootName == "drawGame")
@@ -285,41 +345,57 @@ namespace BomberPenguGame
         if (!player.alive) return;
         player.Die();
 
-        var enemy = player.match.players.FirstOrDefault(p => p != player);
-
-        if (enemy != null && !enemy.alive)
+        if (player.Enemy != null && !player.Enemy.alive)
         {
           player.Draw();
-          enemy.Draw();
+          player.Enemy.Draw();
 
           player.Send("xml", $"<draw />");
-          enemy.Send("xml", $"<draw />");
+          player.Enemy.Send("xml", $"<draw />");
         }
       }
 
-      if (rootName == "msgPlayer")
+      if (rootName == "msgPlayer" || rootName == "msgAll")
       {
+
         var msg = xml.DocumentElement.Attributes["msg"]?.Value ?? "";
-        if (player.match == null) return;
+        if (msg == "") return;
 
-        var enemy = player.match.players.FirstOrDefault(p => p != player);
-        if (enemy == null) return;
-
-        enemy.Send("xml", $"<msgPlayer name=\"{player.Name}\" msg=\"{msg}\" />");
-
-        return;
-      }
-
-      if (rootName == "msgAll")
-      {
-        var msg = xml.DocumentElement.Attributes["msg"]?.Value ?? "";
-        if (player.InMatch || msg == "") return;
-
-				foreach (var p in Players)
-				{
-					if (p == player || p.InMatch) continue;
-					p.Send("xml", $"<msgAll name=\"{player.Name}\" msg=\"{msg}\" />");
-				}
+        if (msg.StartsWith("!"))
+        {
+          Console.WriteLine($"Command: '{msg}'");
+          if (msg == "!h" ||  msg == "!help")
+          {
+            player.ShowHelp();
+          }
+          else if (msg == "!fs" || msg == "!freestyle")
+          {
+            player.RequestFreestyle();
+          }
+          else if (msg == "!bug")
+          {
+            player.SendChat("System", "Report bugs at: https://github.com/freehuntx/flashback/issues");
+          }
+          /*else if (msg.StartsWith("!d "))
+          {
+            player.Send("xml", msg.Replace("(", "<").Replace(")", ">").Substring(3));
+          }*/
+        }
+        else
+        {
+          if (player.InMatch)
+          {
+            player.Enemy?.SendChat(player.Name, msg);
+          }
+          else
+          {
+            foreach (var p in Players)
+            {
+              if (p == player || p.InMatch) continue;
+              p.SendChat(player.Name, msg);
+            }
+          }
+        }
 
         return;
       }
@@ -335,54 +411,54 @@ namespace BomberPenguGame
         enemy?.Send("xml", $"<surrender winner=\"{enemy.Name}\" />");
 
         return;
-			}
+      }
 
       // These should be sent to the enemy
-			if (
+      if (
         rootName == "die" ||
         rootName == "playAgain" ||
         rootName == "Tag10" ||
-        rootName == "Tag11" || 
-				rootName == "Tag12" || 
-				rootName == "Tag14" || 
-				rootName == "Tag16" || 
-				rootName == "Tag17" || 
-				rootName == "Tag18" || 
-				rootName == "Tag19"
-			)
-			{
-				if (!player.InMatch) return;
-        
+        rootName == "Tag11" ||
+        rootName == "Tag12" ||
+        rootName == "Tag14" ||
+        rootName == "Tag16" ||
+        rootName == "Tag17" ||
+        rootName == "Tag18" ||
+        rootName == "Tag19"
+      )
+      {
+        if (!player.InMatch) return;
+
         foreach (var p in player.match.players)
         {
           if (p == player) continue;
           p.Send("xml", xmlString);
         }
         return;
-			}
+      }
 
-			if (rootName == "ping")
-			{
-				player.Send("xml", "<pong/>");
-				return;
-			}
+      if (rootName == "ping")
+      {
+        player.Send("xml", "<pong/>");
+        return;
+      }
 
       Console.WriteLine($"Unhandled: {xmlString}");
     }
 
-		// This method is called when a player sends a message into the server code
-		public override void GotMessage(Player player, Message message)
+    // This method is called when a player sends a message into the server code
+    public override void GotMessage(Player player, Message message)
     {
-			if (message.Type == "xml")
+      if (message.Type == "xml")
       {
-				string xmlString = message.GetString(0);
+        string xmlString = message.GetString(0);
         XmlDocument xmlDoc = new XmlDocument();
         xmlDoc.LoadXml(xmlString);
         OnXml(player, xmlDoc, xmlString);
         return;
-			}
+      }
 
-			Console.WriteLine("[Error] Unhandled message type: " + message.Type);
-		}
-	}
+      Console.WriteLine("[Error] Unhandled message type: " + message.Type);
+    }
+  }
 }
