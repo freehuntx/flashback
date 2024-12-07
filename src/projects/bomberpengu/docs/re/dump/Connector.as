@@ -397,37 +397,50 @@ class Connector extends MovieClip
             break;
          case "startGame":
             trace("case: startGame");
-            Game.playerNr = 2;
-            _loc8_ = _loc2_.attributes.name;
-            trace(_loc8_);
-            Connector.oppName = _loc8_;
-            Connector.updatePlayer2(Connector.oppName,"3");
+            // Previously assumed only 2 players, now handle multiple
+            var _names = _loc2_.attributes.names;
+            var playersList = _names.split(",");
+            // Determine our player number
+            for (var i=0; i<playersList.length; i++) {
+               if (playersList[i] == Connector.myName) {
+                  Game.playerNr = i+1;
+                  break;
+               }
+            }
+            // Update statuses
+            var newOpponents = [];
+            for (var j=0; j<playersList.length; j++) {
+               var pname = playersList[j];
+               if (pname != Connector.myName) {
+                  Connector.updatePlayer2(pname,"3");
+                  newOpponents.push(pname);
+               }
+            }
+
             if(Connector.challengedAll)
             {
                Connector.sendRemChallengeAll();
-               _loc3_ = 0;
-               while(_loc3_ < Connector.players.length)
+               for(var k=0; k<Connector.players.length; k++)
                {
-                  if(Connector.players[_loc3_].pStatus == "2")
+                  if(Connector.players[k].pStatus == "2")
                   {
-                     Connector.updatePlayer2(Connector.players[_loc3_].pName,"0");
+                     Connector.updatePlayer2(Connector.players[k].pName,"0");
                   }
-                  else if(Connector.players[_loc3_].pStatus == "23")
+                  else if(Connector.players[k].pStatus == "23")
                   {
-                     Connector.updatePlayer2(Connector.players[_loc3_].pName,"3");
+                     Connector.updatePlayer2(Connector.players[k].pName,"3");
                   }
-                  _loc3_ = _loc3_ + 1;
                }
             }
             if(!Connector.gameStarted)
             {
                _root.chatBox.clearChatList();
             }
-            Connector.myTurn = false;
+            Connector.myTurn = (Game.playerNr == 1);
             Connector.gameStarted = true;
             Connector.playAgainReq = false;
             Connector.challengedAll = false;
-            Connector.startPlayer = false;
+            Connector.startPlayer = (Game.playerNr == 1);
             _root.gotoAndStop("gameFrame");
             break;
          case "endGame":
@@ -524,11 +537,17 @@ class Connector extends MovieClip
       Connector.xmlSocket.send("<remChallenge name=\"" + targetPlayer + "\" hash=\"xxxxxx\"/>\n");
       Connector.lastMsg = getTimer();
    }
-   static function sendStartGame(targetPlayer)
+   // Updated to handle multiple players
+   static function sendStartGame(targetPlayers)
    {
-      trace("send startGame to " + targetPlayer);
-      Connector.oppName = targetPlayer;
-      Connector.updatePlayer2(Connector.oppName,"3");
+      trace("send startGame to " + targetPlayers);
+      if (typeof(targetPlayers) == "string") {
+         targetPlayers = [targetPlayers];
+      }
+      for (var i = 0; i < targetPlayers.length; i++) {
+         var tp = targetPlayers[i];
+         Connector.updatePlayer2(tp,"3");
+      }
       if(!Connector.gameStarted)
       {
          _root.chatBox.clearChatList();
@@ -539,7 +558,8 @@ class Connector extends MovieClip
       Connector.challengedAll = false;
       Connector.startPlayer = true;
       Game.playerNr = 1;
-      Connector.xmlSocket.send("<startGame name=\"" + targetPlayer + "\" hash=\"xxxxxx\"/>\n");
+      var namesStr = targetPlayers.join(",");
+      Connector.xmlSocket.send("<startGame names=\"" + namesStr + "\" hash=\"xxxxxx\"/>\n");
       Connector.lastMsg = getTimer();
       _root.gotoAndStop("gameFrame");
    }
