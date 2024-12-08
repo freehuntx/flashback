@@ -1,2 +1,2 @@
-export { WebSocketServer } from './server'
-export { WebSocketClient } from './client'
+export * from './server'
+export * from './client'

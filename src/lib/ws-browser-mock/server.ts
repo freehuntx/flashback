@@ -1,18 +1,23 @@
 import { EventEmitter } from 'events';
 import { WebSocketClient } from './client'
 
-interface WebSocketServerOptions {
+export type ConnectionGuard = (client: WebSocketClient) => (Promise<boolean> | boolean)
+
+export interface WebSocketServerOptions {
   ping?: number
   host?: string;
   port?: number;
   url?: string;
+  connectionGuard?: ConnectionGuard
 }
+
 
 export class WebSocketServer extends EventEmitter {
   _host: string
   _port: number
   _ping: number
   _url?: string
+  connectionGuard?: ConnectionGuard
 
   get ping(): number { return this._ping }
 
@@ -22,6 +27,7 @@ export class WebSocketServer extends EventEmitter {
     this._host = options.host ?? '0.0.0.0'
     this._port = options.port ?? (location.protocol === 'https:' ? 443 : 80)
     this._url = options.url
+    this.connectionGuard = options.connectionGuard
 
     this._hookWebSocket();
   }
@@ -52,6 +58,10 @@ export class WebSocketServer extends EventEmitter {
 
       get binaryType() { return this._binaryType }
       set binaryType(binaryType: BinaryType) {
+        if (binaryType !== 'blob' && binaryType !== 'arraybuffer') {
+          throw new Error('Invalid binary type');
+        }
+
         this._binaryType = binaryType
 
         if (binaryType === 'arraybuffer') {
@@ -129,7 +139,7 @@ export class WebSocketServer extends EventEmitter {
           this.onclose?.(event as CloseEvent);
 
           setTimeout(() => {
-            this.wsClient.emit('close'); // TODO: Implement code & reason
+            this.wsClient.emit('close', event);
           }, server.ping/2);
         });
 
@@ -141,24 +151,69 @@ export class WebSocketServer extends EventEmitter {
           }, 1);*/
         });
 
-        // Simulate WebSocket connection
-        setTimeout(() => {
-          this.readyState = WebSocketHook.OPEN;
-          this.dispatchEvent(new Event('open'));
-        }, 100);
+        // Lets delay the connection
+        if (server.connectionGuard) {
+          Promise.resolve(server.connectionGuard(this.wsClient))
+            .then((result: boolean) => {
+              if (!result) {
+                console.log("b4")
+                this.close(1003, 'Rejected by connection guard');
+                console.log("b5")
+                return;
+              }
+
+              // Simulate WebSocket connection
+              setTimeout(() => {
+                this.readyState = WebSocketHook.OPEN;
+                this.dispatchEvent(new Event('open'));
+              }, server.ping/2);
+            })
+            .catch((error) => {
+              console.log("b4a")
+              this.close(1011, 'Internal error in connection guard');
+              console.log("b5a")
+              console.error('Connection guard error:', error);
+            });
+        } else {
+          // Simulate WebSocket connection
+          setTimeout(() => {
+            this.readyState = WebSocketHook.OPEN;
+            this.dispatchEvent(new Event('open'));
+          }, server.ping/2);
+        }
       }
 
-      close() {
-        if (
-          this.readyState === WebSocketHook.CLOSING ||
-          this.readyState === WebSocketHook.CLOSED
-        ) {
-          throw new Error('WebSocket is not open');
+      close(code?: number, reason?: string) {
+        if (code !== undefined) {
+          if (code !== 1000 && (code < 3000 || code > 4999)) {
+            throw new Error('Invalid close code');
+          }
+        }
+        if (reason && reason.length > 123) {
+          throw new Error('Reason string too long');
+        }
+        if (this.readyState === WebSocketHook.CLOSED) {
+          throw new Error('WebSocket is already closed');
+        }
+        if (this.readyState === WebSocketHook.CLOSING) {
+          throw new Error('WebSocket is already closing');
         }
 
         this.readyState = WebSocketHook.CLOSING;
-        this.readyState = WebSocketHook.CLOSED;
-        this.dispatchEvent(new Event('close'));
+
+        // Create close event with code and reason
+        const closeEvent = new CloseEvent('close', {
+          wasClean: true,
+          code: code || 1000,  // 1000 is normal closure
+          reason: reason || '',
+        });
+
+        setTimeout(() => {
+          this.readyState = WebSocketHook.CLOSED;
+          this.dispatchEvent(closeEvent);
+
+
+        }, server.ping/2)
       }
 
       send(data: string | ArrayBufferLike | Blob | ArrayBufferView) {

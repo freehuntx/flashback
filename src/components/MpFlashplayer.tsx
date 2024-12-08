@@ -1,11 +1,12 @@
-import { WebSocketClient, WebSocketServer } from "@/lib/ws-browser-mock";
-import { Flashplayer, FlashplayerProps } from "./Flashplayer";
-import { mergeDeep } from "@/utils/object";
 import { useEffect, useMemo } from "react";
+import { WebSocketClient, WebSocketServer, ConnectionGuard } from "@/lib/ws-browser-mock";
+import { mergeDeep } from "@/utils/object";
+import { Flashplayer, FlashplayerProps } from "./Flashplayer";
 
 export interface Proxy {
   host: string;
   port: number;
+  connectionGuard?: ConnectionGuard
   onConnect?: (socket: WebSocketClient) => void
   onDisconnect?: (socket: WebSocketClient, code?: number, reason?: string) => void
   onMessage?: (socket: WebSocketClient, buffer: ArrayBuffer) => void
@@ -30,7 +31,11 @@ export function MpFlashplayer({ proxies, config, ...props }: MpFlashplayerProps)
     if (!proxies) return
  
     let servers = proxies.map(proxy => {
-      const server = new WebSocketServer({ host: proxy.host, port: proxy.port })
+      const server = new WebSocketServer({
+        host: proxy.host,
+        port: proxy.port,
+        connectionGuard: proxy.connectionGuard
+      })
 
       server.on('connection', (socket: WebSocketClient) => {
         proxy.onConnect?.(socket)

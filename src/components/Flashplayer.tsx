@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 export interface FlashplayerProps extends React.ComponentProps<"div"> {
-  config: Ruffle.URLLoadOptions | Ruffle.DataLoadOptions;
+  config: Ruffle.Config;
   width?: string | number
   height?: string | number
 }

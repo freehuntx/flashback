@@ -17,7 +17,7 @@ const bomberPenguProxy: Proxy = {
       disconnect('Already connected')
     }
 
-    socket.pio = new PioClient('bomberpengu-b3s34ovekbapmidml5oq')
+    socket.pio = new PioClient('bomberpengu-b3s34ovekbapmidml5oq', true)
 
     try {
       if (!socket.pio) throw new Error('pio not found')

@@ -93,7 +93,7 @@ declare global {
       playerRuntime?: PlayerRuntime;
     }
 
-    type Config =  URLLoadOptions & DataLoadOptions
+    type Config =  URLLoadOptions | DataLoadOptions
 
     // https://ruffle.rs/js-docs/master/interfaces/Player.PlayerElement.html
     interface PlayerElement extends HTMLElement {
