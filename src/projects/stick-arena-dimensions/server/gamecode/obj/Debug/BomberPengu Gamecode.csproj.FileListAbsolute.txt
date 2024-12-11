@@ -1,0 +1,9 @@
+B:\Desktop\PlayerIO SDK.s2fG8FIPhRjoY9VN8wEadg\Flash\NewGame\Serverside Code\Game Code\bin\Debug\BomberPengu.dll
+B:\Desktop\PlayerIO SDK.s2fG8FIPhRjoY9VN8wEadg\Flash\NewGame\Serverside Code\Game Code\bin\Debug\BomberPengu.pdb
+B:\Desktop\PlayerIO SDK.s2fG8FIPhRjoY9VN8wEadg\Flash\NewGame\Serverside Code\Game Code\bin\Debug\Player.IO GameLibrary.dll
+B:\Desktop\PlayerIO SDK.s2fG8FIPhRjoY9VN8wEadg\Flash\NewGame\Serverside Code\Game Code\bin\Debug\Player.IO GameLibrary.xml
+B:\Desktop\PlayerIO SDK.s2fG8FIPhRjoY9VN8wEadg\Flash\NewGame\Serverside Code\Game Code\obj\Debug\BomberPengu Gamecode.csproj.AssemblyReference.cache
+B:\Desktop\PlayerIO SDK.s2fG8FIPhRjoY9VN8wEadg\Flash\NewGame\Serverside Code\Game Code\obj\Debug\BomberPengu Gamecode.csproj.CoreCompileInputs.cache
+B:\Desktop\PlayerIO SDK.s2fG8FIPhRjoY9VN8wEadg\Flash\NewGame\Serverside Code\Game Code\obj\Debug\BomberPe.1F459DB2.Up2Date
+B:\Desktop\PlayerIO SDK.s2fG8FIPhRjoY9VN8wEadg\Flash\NewGame\Serverside Code\Game Code\obj\Debug\BomberPengu.dll
+B:\Desktop\PlayerIO SDK.s2fG8FIPhRjoY9VN8wEadg\Flash\NewGame\Serverside Code\Game Code\obj\Debug\BomberPengu.pdb

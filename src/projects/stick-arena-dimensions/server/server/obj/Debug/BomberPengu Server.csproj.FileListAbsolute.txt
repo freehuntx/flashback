@@ -1,0 +1,2 @@
+B:\Desktop\Dateien\Projects\bomberpengu\server\server\obj\Debug\BomberPengu Server.csproj.AssemblyReference.cache
+B:\Desktop\Dateien\Projects\bomberpengu\server\server\obj\Debug\BomberPengu Server.csproj.CoreCompileInputs.cache
