@@ -1,26 +1,29 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import { existsSync, readdirSync, readFileSync } from 'node:fs'
 
-const currentUrl = Astro.url.href.replace(/[\/\\]*$/, '')
-const projects = readdirSync(import.meta.dirname, { withFileTypes: true })
-  .filter(e => e.isDirectory() && e.name !== 'public')
-  .map(e => {
-    const manifestPath = `${import.meta.dirname}/${e.name}/manifest.json`
-    const manifest = JSON.parse(existsSync(manifestPath) ? readFileSync(manifestPath).toString() : '{}')
-    return {
-      id: e.name,
-      name: manifest.name ?? e.name,
-      description: manifest.description ?? '',
-      logo: `${e.name}/${manifest.logo ?? 'logo.png'}`
-    }
-  })
+interface Manifest {
+  name: string
+  description: string
+  logo: string
+}
+
+const manifestEntries: [string, Manifest][] = Object.entries(import.meta.glob<any>('./**/manifest.json', { eager: true })).map(e => [e[0], e[1].default])
+
+const projects = manifestEntries.map(([path, manifest]) => {
+  const id = path.split('/')[1] // Get directory name from path
+  return {
+    id,
+    name: manifest.name ?? id,
+    description: manifest.description ?? '',
+    logo: `./${id}/${manifest.logo ?? 'logo.png'}`
+  }
+})
 ---
 
 <Layout title="Game list">
   <div class="game-library">
     {projects.map(({ id, name, logo }) => (
-      <a href={`${currentUrl}/${id}`}>
+      <a href={`./${id}`}>
         <img alt={name} src={logo} />
         <span>{name}</span>
       </a>
