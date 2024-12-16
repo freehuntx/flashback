@@ -1,5 +1,5 @@
-import { TypedEventEmitter } from "../typed-events";
-import { promisify } from "./helper";
+import { TypedEventEmitter } from '../typed-events'
+import { promisify } from './helper'
 
 export class PioRoom extends TypedEventEmitter<{
   joined: [],
@@ -34,12 +34,12 @@ export class PioRoom extends TypedEventEmitter<{
     this.#pio.client.multiplayer.useSecureConnections = location.protocol === 'https:'
     this.#room = await promisify(this.#pio.client.multiplayer.createJoinRoom)(this.#roomId, this.#roomType, false, options.roomData || null, options.joinData || null)
     
-    this.#room.addMessageCallback("event", (message: any) => {
+    this.#room.addMessageCallback('event', (message: any) => {
       const event: [name: string, ...rest: any[]] = JSON.parse(message.getString(0))
       this.emit('event', ...event)
     })
     
-    this.#room.addMessageCallback("xml", (message: any) => {
+    this.#room.addMessageCallback('xml', (message: any) => {
       this.emit('xml', message.getString(0))
     })
 
@@ -83,6 +83,12 @@ export class PioClient extends TypedEventEmitter<{
     
     this.emit('connected')
   }
+
+  disconnect() {
+    if (!this.#client) throw new Error('Not connected')
+    this.#client.disconnect()
+    this.#client = null
+  }
   
   async joinRoom(roomId: string, roomType: string, options: any = {}): Promise<PioRoom> {
     if (!this.#client) throw new Error('Not connected')
@@ -109,61 +115,3 @@ export class PioClient extends TypedEventEmitter<{
     return room
   }
 }
-/*
-export class PioClient2 extends TypedEventEmitter<{
-  connected: [],
-  joinedRoom: [room: any]
-  leftRoom: [room: any]
-  roomEvent: [room: any, name: string, ...args: any[]]
-}> {
-  client: any
-  rooms = new Map<string, any>()
-
-  constructor() {
-    super()
-  }
-
-  async login(name: string) {
-    if (this.client) throw new Error('Already logged in')
-
-      this.client = await new Promise((resolve, reject) => {
-        PlayerIO.authenticate("bomberpengu-b3s34ovekbapmidml5oq", "public", { userId: name }, {}, resolve, reject)
-      })
-			this.client.multiplayer.developmentServer = 'localhost:8184'
-      console.log('Login success!')
-      this.emit('connected')
-  }
-
-  async joinRoom(roomId: string, roomType: string) {
-    if (!this.client) throw new Error('Not logged in')
-    if (this.rooms.has(roomId)) throw new Error('Already joined room')
-
-    try {
-      const room = await new Promise((resolve, reject) => {
-        this.client.multiplayer.createJoinRoom(roomId, roomType, false, null, null, resolve, reject)
-      })
-      this.rooms.set(roomId, room)
-      this.emit('joinedRoom', room)
-
-      room.addMessageCallback("*", message => {
-        const [name, ...args] = message.getString(0).split(';')
-        console.log(name, args)
-        this.emit('roomEvent', name, args)
-      })
-
-      room.addDisconnectCallback(() => {
-        this.rooms.delete(roomId)
-        this.emit('leftRoom', room)
-      })
-
-      console.log('Room join success!')
-
-      return room
-    } catch (err) {
-      console.error('Room join failed:', err)
-    }
-
-    return null
-  }
-}
-*/
