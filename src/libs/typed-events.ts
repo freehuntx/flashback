@@ -1,4 +1,4 @@
-import { EventEmitter } from "events"
+import { EventEmitter } from 'events'
 
 export class TypedEventEmitter<TEvents extends Record<string, any>> {
   private emitter = new EventEmitter()

@@ -1,1 +1,0 @@
-export * as bomberpengu from './bomberpengu'
