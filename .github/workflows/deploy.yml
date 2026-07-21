@@ -2,33 +2,56 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - master
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+          cache: npm
 
-      - name: Install Yarn
-        run: npm install -g yarn
+      - run: npm ci
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Run tests
+        run: npm test
 
       - name: Build
-        run: yarn build
+        run: |
+          # Project sites are served under /<repo>/, user/org sites (<user>.github.io) at /.
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          if [[ "$REPO_NAME" == *.github.io ]]; then
+            export BASE_PATH="/"
+          else
+            export BASE_PATH="/${REPO_NAME}/"
+          fi
+          echo "Building with BASE_PATH=$BASE_PATH"
+          npm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist # or your build output directory
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

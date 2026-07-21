@@ -1,83 +1,70 @@
-# 🎮 Flashback
+# Flashback
 
-<p align="center">
-  <img src="assets/logo.png" alt="Flashback Logo" width="200"/>
-</p>
+Multiplayer Flash classics, resurrected in the browser.
 
-<p align="center">
-  Reviving the golden age of Flash games with modern web technologies
-</p>
-<p align="center">
-  <a href="https://freehuntx.github.io/flashback" target="_blank">
-    🎮 Browse the Game Library 🎮
-  </a>
-</p>
+No game servers exist anymore - so Flashback doesn't need any. The original
+SWF runs in [Ruffle](https://ruffle.rs), its socket and HTTP traffic is
+intercepted in the page, and one player's browser acts as the game server.
+Everyone else connects to it peer-to-peer via
+[Trystero](https://github.com/dmotz/trystero) (WebRTC). If the host closes
+their tab, the server state migrates to another player and the game keeps
+going - the SWFs never notice a thing.
 
-## 🌟 Overview
-Flashback is an open-source project dedicated to preserving and modernizing classic Flash games. Using modern web technologies, we're not only bringing these games back to life but also enhancing some of them with extra multiplayer capabilities!
+**Play it:** open the gallery, pick a game, share the URL (add
+`?room=yourcode` to play in a private room). Every game has its own page, so
+deep links work: `games/stickarena-dimensions/?room=friday-night`.
 
-### ✨ Features
-- 🎯 Play classic Flash games in modern browsers
-- 🌐 Multiplayer support for selected games
-- 💻 Cross-platform compatibility
-- 🔄 Smooth, seamless gameplay experience
-- 📱 Responsive design
+## Games
 
-## 🚀 Tech Stack
-- [React](https://reactjs.org/) - Frontend framework
-- [Ruffle](https://ruffle.rs/) - Flash emulator
-- [PlayerIO](https://playerio.com/) - Server-side game logic
-- [Trystero](https://github.com/dmotz/trystero) - P2P communication
-- [Vite](https://vitejs.dev/) - Build tool and development server
+| Game | Players | Notes |
+| --- | --- | --- |
+| Stick Arena: Dimensions | 2-6 | Accounts, shop, cred tickets, vote-kicks - accounts persist in your browser (localStorage) |
+| BomberPengu | 2 | Head-to-head bomberman duels |
+| Minigolf: Tropical Island | 2-4 | 18 holes, lobby chat, rematches |
 
-## 🎮 Supported Games
-| Game        | Single Player | Multiplayer |
-|-------------|:-------------:|:-----------:|
-| [Bomberpengu](https://freehuntx.github.io/flashback/bomberpengu) | ❔ | ✅ |
-> ❔ = Not existant
+## Repository layout
 
-## 🛠️ Installation
-```bash
-# Clone the repository
-git clone https://github.com/freehuntx/flashback.git
-
-# Navigate to project directory
-cd flashback
-
-# Install dependencies
-yarn
-
-# Start development server
-yarn dev
+```
+index.html               The gallery (game boxes -> per-game pages)
+games/<id>/index.html    One real page per game (deep-linkable, fullscreen)
+src/flashnet/            The network lib: virtual sockets/HTTP, host election,
+                         state migration, Trystero bridge
+src/games/<id>/          Per-game server emulation (game.ts) + wiring (main.ts)
+src/gallery/             Gallery UI + game registry
+public/games/<id>/       Game assets (SWFs, maps, configs)
+test/                    Protocol + migration integration tests (Node)
+reference/               Reverse-engineering material (decompiled dumps)
+.github/workflows/       GitHub Pages deployment
 ```
 
-## 🚧 Development
-To contribute to Flashback, please follow these steps:
+## Development
 
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Commit your changes (`git commit -m 'Add some amazing feature'`)
-5. Push to the branch (`git push origin feature/amazing-feature`)
-6. Open a Pull Request
+```
+npm install
+npm run dev        # gallery at http://localhost:5173, games under /games/<id>/
+npm test           # lib smoke tests + per-game protocol/migration tests
+npm run build      # typecheck + production build into dist/
+```
 
-## 📝 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Useful query params on game pages: `?room=<code>` (private room),
+`&debug` (full packet log), `&name=<name>` where supported.
 
-## 🤝 Contributing
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/freehuntx/flashback/issues).
+## Deployment
 
-## 💖 Acknowledgments
-- Thanks to all the original Flash game creators
-- The Ruffle team for making Flash emulation possible
-- PlayerIO and trytero for making multiplayer possible
-- All contributors who help keep this project alive
+Pushing to `main`/`master` builds and deploys to GitHub Pages via
+`.github/workflows/deploy.yml` (enable Pages with source "GitHub Actions" in
+the repository settings once). The base path is derived from the repository
+name automatically.
 
-## ⚠️ Disclaimer
-This project is for educational purposes and game preservation. All games are property of their respective owners.
+## Adding a game
 
----
+1. Reverse-engineer the protocol (Ruffle + `&debug` logging is your friend;
+   a community private-server implementation is gold).
+2. Implement it as a `GameServer` in `src/games/<id>/game.ts` -
+   `defineGame({ endpoints, statefulMigration, http, createServer })`.
+3. Add wiring (`main.ts`), a page (`games/<id>/index.html`), assets
+   (`public/games/<id>/`), a registry entry (`src/gallery/games.ts`), a Vite
+   input (`vite.config.ts`) and an integration test (`test/<id>.test.mjs`).
 
-<p align="center">
-  Made with ❤️ by the Flashback team
-</p>
+All games belong to their original creators. Flashback exists so they can
+still be played.

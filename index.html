@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flashback - play Flash multiplayer classics</title>
+    <meta
+      name="description"
+      content="Flashback revives multiplayer Flash games in the browser: peer-to-peer, serverless, exactly like you remember them."
+    />
+    <style>
+      :root { color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; min-height: 100vh;
+        background: radial-gradient(1200px 600px at 50% -200px, #1d2340, #0d0f17 60%);
+        color: #e6e6ee;
+        font: 15px/1.55 system-ui, "Segoe UI", sans-serif;
+      }
+      header { text-align: center; padding: 3.5rem 1rem 2rem; }
+      header h1 {
+        margin: 0; font-size: 2.6rem; letter-spacing: 0.04em;
+        background: linear-gradient(90deg, #ffb454, #ff5e7e, #9d7bff);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      header p { margin: 0.6rem auto 0; max-width: 34rem; color: #a8aabc; }
+      #games {
+        display: grid; gap: 1.4rem; padding: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        max-width: 1100px; margin: 0 auto 4rem;
+        justify-content: center;
+      }
+      .card {
+        display: flex; flex-direction: column; overflow: hidden;
+        background: #171a26; border: 1px solid #262b3d; border-radius: 14px;
+        color: inherit; text-decoration: none;
+        transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+      .card:hover {
+        transform: translateY(-3px); border-color: #4a5378;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      }
+      .cover { aspect-ratio: 4 / 3; background: #10121c; }
+      .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .body { padding: 1rem 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.45rem; flex: 1; }
+      .body h2 { margin: 0; font-size: 1.15rem; }
+      .meta { margin: 0; font-size: 0.8rem; color: #8b8ea3; text-transform: uppercase; letter-spacing: 0.06em; }
+      .desc { margin: 0; color: #b9bccd; flex: 1; }
+      .actions { display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem; }
+      .play {
+        background: #2b3350; border-radius: 8px; padding: 0.35rem 0.9rem;
+        font-weight: 600; font-size: 0.9rem;
+      }
+      .card:hover .play { background: #3d4a78; }
+      .original { color: #7f86a8; font-size: 0.8rem; text-decoration: none; }
+      .original:hover { color: #b9bccd; text-decoration: underline; }
+      footer { text-align: center; color: #666a80; padding: 0 1rem 2.5rem; font-size: 0.85rem; }
+      footer a { color: #8b90ad; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>FLASHBACK</h1>
+      <p>
+        Multiplayer Flash classics, resurrected. Pick a game, share the link, play.
+      </p>
+    </header>
+    <main id="games"></main>
+    <footer>
+      Runs on <a href="https://ruffle.rs" target="_blank" rel="noopener">Ruffle</a> +
+      <a href="https://github.com/dmotz/trystero" target="_blank" rel="noopener">Trystero</a>.
+      Games belong to their original creators ·
+      <a href="https://github.com/freehuntx/flashback" target="_blank" rel="noopener">source</a>
+    </footer>
+    <script type="module" src="/src/gallery/main.ts"></script>
+  </body>
+</html>
