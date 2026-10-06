@@ -171,7 +171,7 @@ net.listenHttp(
   async (_request, url) => {
     const candidates = [url.pathname];
     for (const prefix of ["/blastrage/", "/blast-rage-online/"]) {
-      if (url.pathname.startsWith(prefix)) candidates.push(url.pathname.slice(prefix.length - 1));
+      if (url.pathname.startsWith(prefix)) candidates.unshift(url.pathname.slice(prefix.length - 1));
     }
     const assetRoot = import.meta.env.BASE_URL.replace(/\/$/, "") + "/games/blast-rage-online";
     for (const path of candidates) {
