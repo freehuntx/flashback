@@ -13,6 +13,17 @@ export interface GameEntry {
 
 export const games: GameEntry[] = [
   {
+    id: "blast-rage-online",
+    title: "Blast Rage Online",
+    description:
+      "Fast arena combat with customizable hover tanks, team battles and " +
+      "overload objectives, restored with peer-to-peer multiplayer.",
+    cover: "covers/blast-rage-online.svg",
+    path: "games/blast-rage-online/",
+    players: "2-12 players",
+    publisher: "XGen Studios",
+  },
+  {
     id: "stickarena-dimensions",
     title: "Stick Arena: Dimensions",
     description:

@@ -18,6 +18,7 @@ deep links work: `games/stickarena-dimensions/?room=friday-night`.
 
 | Game | Players | Notes |
 | --- | --- | --- |
+| Blast Rage Online | 2-12 | Accounts, rooms, three game modes, encrypted gameplay relay |
 | Stick Arena: Dimensions | 2-6 | Accounts, shop, cred tickets, vote-kicks - accounts persist in your browser (localStorage) |
 | BomberPengu | 2 | Head-to-head bomberman duels |
 | Minigolf: Tropical Island | 2-4 | 18 holes, lobby chat, rematches |

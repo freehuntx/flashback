@@ -1,0 +1,118 @@
+method
+name null
+flag NEED_ACTIVATION
+param QName(PackageNamespace("flash.events"),"Event")
+returns QName(PackageNamespace(""),"void")
+
+body
+maxstack 5
+localcount 6
+initscopedepth 7
+maxscopedepth 12
+trait slot QName(PackageInternalNs("48"),"evt")
+slotid 1
+type QName(PackageNamespace("flash.events"),"Event")
+end ; trait
+
+code
+pushfalse
+pushtrue
+swap
+jump ofs000f
+getlocal3
+pushnull
+inclocal 4
+popscope
+kill 3
+instanceof
+ofs000f:
+setlocal 4
+setlocal 5
+getlocal0
+pushscope
+newactivation
+dup
+setlocal2
+pushscope
+getscopeobject 1
+getlocal1
+setslot 1
+ofs001e:
+getlex QName(PackageNamespace(""),"%;")
+iffalse contextdone
+getlex QName(PackageNamespace(""),"%;")
+getlocal0
+getproperty QName(PackageNamespace(""),"loader")
+getproperty QName(PackageNamespace(""),"contentLoaderInfo")
+getproperty QName(PackageNamespace(""),"applicationDomain")
+setproperty QName(PackageNamespace(""),"applicationDomain")
+contextdone:
+findproperty QName(PackageNamespace(""),"each")
+getlocal0
+getproperty QName(PackageNamespace(""),"loader")
+getproperty QName(PackageNamespace(""),"content")
+initproperty QName(PackageNamespace(""),"each")
+getlocal 4
+dup
+jump ofs003b
+declocal_i 2
+inclocal_i 4
+inclocal 2
+inclocal_i 2
+equals
+swap
+ofs003b:
+iffalse ofs0042
+pop
+getlocal0
+convert_b
+ofs0042:
+iftrue ofs004f
+getlocal0
+getscopeobject 1
+getslot 1
+callsupervoid QName(PackageNamespace(""),"onCompleteHandler"), 1
+ofs004f:
+jump ofs008b
+ofs0053:
+getlocal0
+pushscope
+jump ofs0060
+decrement
+kill 3
+getlocal2
+setlocal2
+dxnslate
+dup
+ofs0060:
+getlocal2
+pushscope
+newcatch 0
+dup
+setlocal3
+dup
+pushscope
+swap
+setslot 1
+getlocal 4
+iftrue ofs007f
+findproperty QName(PackageNamespace(""),"each")
+getlex QName(PackageNamespace(""),"loader")
+initproperty QName(PackageNamespace(""),"each")
+getlocal 5
+iffalse ofs0088
+ofs007f:
+getlocal0
+getscopeobject 1
+getslot 1
+callsupervoid Multiname("onCompleteHandler",[PrivateNamespace("*","86"),PackageNamespace(""),PackageNamespace("flash.net"),PrivateNamespace("*","90"),PackageNamespace("48"),PackageInternalNs("48"),Namespace("http://adobe.com/AS3/2006/builtin"),PackageNamespace("flash.display"),PackageNamespace("flash.events"),PackageNamespace("flash.utils"),StaticProtectedNs("9\'"),StaticProtectedNs("[&"),StaticProtectedNs("flash.events:EventDispatcher"),ProtectedNamespace("[&")]), 1
+ofs0088:
+popscope
+kill 3
+ofs008b:
+returnvoid
+returnvoid
+end ; code
+try from ofs001e to ofs004f target ofs0053 type QName(PackageNamespace(""),"SecurityError") name QName(PackageNamespace(""),"e") end
+end ; body
+end ; method

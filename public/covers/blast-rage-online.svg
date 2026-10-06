@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="Blast Rage Online">
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#07151b"/><stop offset="1" stop-color="#180b08"/></linearGradient>
+    <radialGradient id="fire"><stop stop-color="#fff6ac"/><stop offset=".2" stop-color="#ffad28"/><stop offset=".55" stop-color="#e63b15"/><stop offset="1" stop-color="#29100a" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#bg)"/>
+  <g fill="none" stroke="#41bdd1" stroke-opacity=".18">
+    <path d="M0 85h800M0 365h800M90 0v450M710 0v450"/>
+    <circle cx="400" cy="225" r="170"/><circle cx="400" cy="225" r="205"/>
+  </g>
+  <circle cx="400" cy="235" r="180" fill="url(#fire)"/>
+  <path d="M186 261l83-66 82 24 53-78 57 77 86-23 78 70-111-17-52 63-65-35-66 37-52-65z" fill="#111b1e" stroke="#88d6df" stroke-width="5"/>
+  <path d="M326 229l76-48 77 48-15 64-62 28-62-28z" fill="#24363a" stroke="#d7f5f5" stroke-width="4"/>
+  <path d="M402 181v-49M402 132l34-22" stroke="#ffb134" stroke-width="12" stroke-linecap="round"/>
+  <text x="400" y="84" fill="#e9fbff" font-family="Impact, sans-serif" font-size="72" text-anchor="middle" letter-spacing="5">BLAST RAGE</text>
+  <text x="400" y="395" fill="#ffb02f" font-family="Arial, sans-serif" font-size="34" font-weight="bold" text-anchor="middle" letter-spacing="14">ONLINE</text>
+</svg>

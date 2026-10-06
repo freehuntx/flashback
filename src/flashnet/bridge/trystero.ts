@@ -35,7 +35,7 @@ export interface TrysteroBridgeOptions {
  * P2P bridge over Trystero (WebRTC).
  *
  * ```ts
- * import { joinRoom, selfId } from 'trystero'
+ * import { joinRoom, selfId } from '@trystero-p2p/mqtt'
  * const bridge = trysteroBridge({ room: joinRoom({ appId: 'flashback' }, 'bomber-1'), selfId })
  * ```
  */
