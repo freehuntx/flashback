@@ -1,0 +1,22 @@
+{
+	"servers" : [["North America", "game01.xgenstudios.com:1247"],["Europe","game08.xgenstudios.com:1247"]],
+	"max_players" : 12,
+	"warmup_length" : 30,
+	"round_length" : 300,
+	"summary_length" : 30,
+	"point_health" : 32000,
+	"respawn_wave_time" : 300,
+	"maps" : ["ChaosCage.txt","IronHaven.txt","LaserDome.txt","SavageLuster.txt","ShatteredColiseum.txt"],
+	"language_filter" : ["fuck", "cunt", "nigger", "faggot"],
+	"map_prefixes" : ["Blood", "Global", "Industrial", "Nuclear", "Space", "Command", "Chaos", "Savage"],
+	"map_suffixes" : ["Gulch", "Run", "HQ", "Burrow", "Foundation", "Pit", "Outpost", "Mountain", "Surface", "Stronghold", "Crash Site", "Dome", "Valley", "Cage", "Keep", "Coliseum"],
+	"qs_prefixes" : ["Hover", "Hobo", "John", "Dingle", "Sparky", "Cuddles", "Jacob", "Giggles", "Ethan", "Emma", "Scooter", "Hovery", "Murray", "Jethro", "Kip", "Wally", "Chad", "Mary", "Buster"],
+	"qs_suffixes" : ["McGee", "Lover", "Chops", "Samson", "Doe", "Schmoe", "Brown", "Hancock", "Sugar", "Baby", "Black", "Bucko", "Jane", "Sport", "Chump", "Dangle"],
+	"color_picker" : 1,
+	"ranks" : [14500,55000,160000,320000,530000,810000,1200000,2000000,3500000],
+	"tracks" : [[["Track1Intro", "Track1"],1],[["Track2Intro", "Track2"],1],[["Track3Intro", "Track3"],1]],
+	"use_filler_ships" : 0,
+	"min_intensity" : 128,
+	"color_add" : "646464",
+	"error_messages" : ["You have been kicked for being AFK.", "Blast Rage Online is having difficulty communicating with the server (Above 275ms Ping time).","Game does not exist.","Could not create game, game already exists.","Game is full.","Your rank is too high for this game.", "Your rank is too low for this game."]
+}

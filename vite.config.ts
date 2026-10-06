@@ -52,6 +52,7 @@ export default defineConfig({
       // game has its own deep-linkable URL that works on static hosting.
       input: {
         gallery: resolve(projectDir, "index.html"),
+        blastRage: resolve(projectDir, "games/blast-rage-online/index.html"),
         bomberpengu: resolve(projectDir, "games/bomberpengu/index.html"),
         minigolf: resolve(projectDir, "games/minigolf-tropical-island/index.html"),
         stickarena: resolve(projectDir, "games/stickarena-dimensions/index.html"),

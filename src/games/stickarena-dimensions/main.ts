@@ -1,5 +1,5 @@
 import { createSession, trysteroBridge, VirtualNetwork } from "../../flashnet/index.ts";
-import { joinRoom, selfId } from "trystero";
+import { joinRoom, selfId } from "@trystero-p2p/mqtt";
 import { stickarena } from "./game.ts";
 
 type RufflePlayerElement = HTMLElement & {
