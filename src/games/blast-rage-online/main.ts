@@ -206,6 +206,8 @@ document.getElementById("player-slot")!.appendChild(player);
   autoplay: "on",
   unmuteOverlay: "hidden",
   splashScreen: false,
+  // Startup rasterizes the external graphics library in one synchronous AVM2 callback.
+  maxExecutionDuration: 60,
   letterbox: "on",
   scale: "showAll",
   forceScale: true,
