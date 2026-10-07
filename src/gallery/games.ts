@@ -36,6 +36,18 @@ export const games: GameEntry[] = [
     publisher: "XGen Studios",
   },
   {
+    id: "tiny-tanks",
+    title: "Tiny Tanks",
+    description:
+      "Doodled tank battles with ricocheting shells - last tank alive, " +
+      "deathmatch and capture the flag for up to 8 players, with accounts, " +
+      "the upgrade shop and the community level vault.",
+    cover: "covers/tiny-tanks.png",
+    path: "games/tiny-tanks/",
+    players: "2-8 players",
+    publisher: "Chaz Robinson",
+  },
+  {
     id: "bomberpengu",
     title: "BomberPengu",
     description:

@@ -20,6 +20,7 @@ deep links work: `games/stickarena-dimensions/?room=friday-night`.
 | --- | --- | --- |
 | Blast Rage Online | 2-12 | Accounts, rooms, three game modes, encrypted gameplay relay |
 | Stick Arena: Dimensions | 2-6 | Accounts, shop, cred tickets, vote-kicks - accounts persist in your browser (localStorage) |
+| Tiny Tanks | 2-8 | Player-hosted rooms over emulated RTMFP, accounts, shop, level vault - accounts persist in your browser |
 | BomberPengu | 2 | Head-to-head bomberman duels |
 | Minigolf: Tropical Island | 2-4 | 18 holes, lobby chat, rematches |
 
@@ -33,6 +34,7 @@ src/flashnet/            The network lib: virtual sockets/HTTP, host election,
 src/games/<id>/          Per-game server emulation (game.ts) + wiring (main.ts)
 src/gallery/             Gallery UI + game registry
 public/games/<id>/       Game assets (SWFs, maps, configs)
+tools/<id>/              SWF patch tooling, for games that need one
 test/                    Protocol + migration integration tests (Node)
 reference/               Reverse-engineering material (decompiled dumps)
 .github/workflows/       GitHub Pages deployment
@@ -66,6 +68,14 @@ name automatically.
 3. Add wiring (`main.ts`), a page (`games/<id>/index.html`), assets
    (`public/games/<id>/`), a registry entry (`src/gallery/games.ts`), a Vite
    input (`vite.config.ts`) and an integration test (`test/<id>.test.mjs`).
+
+Some games use Flash features Ruffle doesn't have. Tiny Tanks networks over
+Adobe Cirrus (RTMFP peer-to-peer NetStreams), so `tools/tiny-tanks/` patches
+its SWF: a small AS3 shim replaces `flash.net.NetConnection`/`NetStream` and
+talks to a per-page router (`src/games/tiny-tanks/rtmfp.ts`) that carries the
+streams over the bridge. Rebuild with
+`FFDEC_HOME=/path/to/ffdec tools/tiny-tanks/build.sh` (needs Java, Node and an
+FFDec distribution with its `flashlib/`).
 
 All games belong to their original creators. Flashback exists so they can
 still be played.

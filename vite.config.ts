@@ -56,6 +56,7 @@ export default defineConfig({
         bomberpengu: resolve(projectDir, "games/bomberpengu/index.html"),
         minigolf: resolve(projectDir, "games/minigolf-tropical-island/index.html"),
         stickarena: resolve(projectDir, "games/stickarena-dimensions/index.html"),
+        tinyTanks: resolve(projectDir, "games/tiny-tanks/index.html"),
       },
     },
   },
